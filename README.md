@@ -17,7 +17,7 @@ $ sudo sh -c "chmod 600 ~myappuser/.ssh/*"
 Install dependencies
 ```bash
 $ sudo apt-get update
-sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs
+$ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs
 ```
 Install rbenv for all users (must add users to rbenv group)
 ```bash
@@ -56,3 +56,5 @@ $ sudo chown myappuser: /var/www/myapp
 $ cd /var/www/myapp
 $ sudo -u myappuser -H git clone git://github.com/username/myapp.git code
 ```
+
+TODO: Setting up ruby version for myapp user
