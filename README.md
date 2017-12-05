@@ -86,7 +86,7 @@ Copy the secret key that is generated, then open the .rbenv-vars file.
 ```bash 
 $ vi ~/.rbenv-vars
 ```
-First, set the SECRET_KEY_BASE variable like this (replace the highlighted text with the secret that you just generated and copied):
+First, set the SECRET_KEY_BASE variable like this:
 ```bash 
 SECRET_KEY_BASE=[your_generated_secret]
 ```
@@ -99,14 +99,14 @@ Update the production section so it looks something like this:
 production:
   <<: *default
   host: localhost
-  adapter: postgresql
+  adapter: mysql
   encoding: utf8
-  database: appname_production
+  database: myapp_production
   pool: 5
   username: <%= ENV['MYAPP_DATABASE_USER'] %>
   password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
 ```
-Note that the database username and password are configured to be read by environment variables, MYAPP_DATABASE_USER and MYAPP_DATABASE_PASSWORD.  Once again edit the .rbenv-vars file and add the credentials:
+Note that the database username and password are configured to be read by environment variables, MYAPP_DATABASE_USER and MYAPP_DATABASE_PASSWORD.  Once again, edit the .rbenv-vars file and add the credentials:
 ```bash 
 $ vi ~/.rbenv-vars
 ```
