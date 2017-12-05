@@ -19,14 +19,19 @@ Install dependencies
 $ sudo apt-get update
 $ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev nodejs
 ```
-Install rbenv for all users (must add users to rbenv group)
+Install rbenv and the ruby-build pluging for all users (must add users to rbenv group)
 ```bash
 $ cd /usr/local
 $ git clone https://github.com/rbenv/rbenv.git rbenv
 $ git clone https://github.com/rbenv/ruby-build.git rbenv/plugins/ruby-build
 $ chgrp -R rbenv rbenv
 $ chmod -R g+rwxXs rbenv
-```
+$ cd /usr/local/rbenv
+$ mkdir plugins
+$ cd plugins
+$ git clone git://github.com/sstephenson/ruby-build.git
+$ chgrp -R rbenv ruby-build
+$ chmod -R g+rwxs ruby-build```
 Setup rbenv for current user
 ```bash
 $ echo 'export PATH="/usr/local/rbenv:$PATH"' >> ~/.bashrc
@@ -49,6 +54,10 @@ $ ruby -v
 $ gem install bundler
 $ rbenv rehash
 ```
+TODO: gem: --no-document
+Need to add this to the gemrc file. 
+Should be in /etc/gemrc but want to test this
+
 ## Setting up application code
 ```bash
 $ sudo mkdir -p /var/www/myapp
@@ -56,5 +65,8 @@ $ sudo chown myappuser: /var/www/myapp
 $ cd /var/www/myapp
 $ sudo -u myappuser -H git clone git://github.com/username/myapp.git code
 ```
-
-TODO: Setting up ruby version for myapp user
+## Setting up ruby version for myapp
+```bash
+$ cd /var/www/myapp/code
+$ rbenv install 2.4.3
+$ rbenv local 2.4.3
