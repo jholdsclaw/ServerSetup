@@ -115,3 +115,8 @@ Set the MYAPP_DATABASE_USER and MYAPP_DATABASE_PASSWORD environment variables:
 MYAPP_DATABASE_USER=[appname]
 MYAPP_DATABASE_PASSWORD=[prod_db_pass]
 ```
+
+## Setting up Puma
+TODO: configuring puma
+TODO: setting up puma for upstart/systemd autostart
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04
