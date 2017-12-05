@@ -1,18 +1,4 @@
 # Server Setup
-## Setting up application user account
-Create the new user account
-```bash
-$ sudo adduser myappuser
-```
-Setup SSH keys for new user account
-```bash
-$ sudo mkdir -p ~myappuser/.ssh
-$ touch $HOME/.ssh/authorized_keys
-$ sudo sh -c "cat $HOME/.ssh/authorized_keys >> ~myappuser/.ssh/authorized_keys"
-$ sudo chown -R myappuser: ~myappuser/.ssh
-$ sudo chmod 700 ~myappuser/.ssh
-$ sudo sh -c "chmod 600 ~myappuser/.ssh/*"
-```
 ## Setting up Ruby
 Install dependencies
 ```bash
@@ -58,15 +44,34 @@ TODO: gem: --no-document
 Need to add this to the gemrc file. 
 Should be in /etc/gemrc but want to test this
 
+## Setting up application user account
+Create the new app user account
+```bash
+$ sudo adduser myapp
+```
+Setup SSH keys for new app user account
+```bash
+$ sudo mkdir -p ~myapp/.ssh
+$ touch $HOME/.ssh/authorized_keys
+$ sudo sh -c "cat $HOME/.ssh/authorized_keys >> ~myapp/.ssh/authorized_keys"
+$ sudo chown -R myapp: ~myapp/.ssh
+$ sudo chmod 700 ~myapp/.ssh
+$ sudo sh -c "chmod 600 ~myapp/.ssh/*"
+```
+Add new app user account to rbenv group
+```bash 
+$ sudo usermod -a -G rbenv myapp
+```
+
 ## Setting up application code
 ```bash
-$ sudo mkdir -p /var/www/myapp
-$ sudo chown myappuser: /var/www/myapp
-$ cd /var/www/myapp
-$ sudo -u myappuser -H git clone git://github.com/username/myapp.git code
+$ sudo -su myapp
+$ git clone git://github.com/username/myapp.git ~/code
 ```
 ## Setting up ruby version for myapp
 ```bash
-$ cd /var/www/myapp/code
+$ sudo -su myapp
+$ cd ~/code
 $ rbenv install 2.4.3
 $ rbenv local 2.4.3
+```
