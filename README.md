@@ -182,5 +182,40 @@ And add the entry:
 ``` bash
 /var/www/myapp
 ```
-### TODO: Install Nginx
-https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04#install-and-configure-nginx 
+### Install and Configure Nginx
+Install Nginx using apt-get:
+``` bash
+$ sudo apt-get install nginx
+```
+OPTIONAL: Copy the default site config:
+``` bash
+$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/myapp
+```
+Update the conf for your app:
+``` bash
+upstream app {
+    # Path to Puma SOCK file, as defined previously
+    server unix:/var/www/appname/shared/sockets/puma.sock fail_timeout=0;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    root /var/www/appname/public;
+
+    try_files $uri/index.html $uri @app;
+
+    location @app {
+        proxy_pass http://app;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+    }
+
+    error_page 500 502 503 504 /500.html;
+    client_max_body_size 4G;
+    keepalive_timeout 10;
+}
+```
+# TODO: Fix nginx script above for explicit virtual host URL's
