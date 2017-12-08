@@ -219,3 +219,4 @@ server {
 }
 ```
 # TODO: Fix nginx script above for explicit virtual host URL's
+https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04
