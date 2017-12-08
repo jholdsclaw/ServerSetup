@@ -67,19 +67,19 @@ $ sudo usermod -a -G rbenv myapp
 ### Setting up application code
 ```bash
 $ sudo -su myapp
-$ git clone git://github.com/username/myapp.git ~/code
+$ git clone git://github.com/username/myapp.git /var/www/myapp
 ```
 ### Setting up ruby version for myapp
 ```bash
 $ sudo -su myapp
-$ cd ~/code
+$ cd /var/www/myapp
 $ rbenv install 2.4.2
 $ rbenv local 2.4.2
 ```
 ### Setting up rbenv-vars secrets/credentials
 ```bash
 $ sudo -su myapp
-$ cd ~/code
+$ cd /var/www/myapp
 $ rake secret
 ```
 Copy the secret key that is generated, then open the .rbenv-vars file.
@@ -92,6 +92,7 @@ SECRET_KEY_BASE=[your_generated_secret]
 ```
 Edit your database.yml file for database credentials
 ```bash 
+$ cd /var/www/myapp
 $ vi config/database.yml
 ```
 Update the production section so it looks something like this:
@@ -123,6 +124,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-
 ### Configuring Puma for your app
 Now, let's add our Puma configuration to `config/puma.rb`. Open the file in a text editor:
 ``` bash
+$ cd /var/www/myapp
 $ vi config/puma.rb
 ```
 Copy and paste this configuration into the file:
@@ -164,16 +166,15 @@ $ mkdir -p shared/pids shared/sockets shared/log
 ### Setting up Puma for upstart/systemd autostart
 Download the Jungle Upstart tool from the Puma GitHub repository to your home directory:
 ```bash 
-$ cd ~
+$ cd /etc/init
 $ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma-manager.conf
-$ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma.conf
 ``` 
-Now open the provided ```puma.conf``` file, so we can configure the Puma deployment user:
+Now download my modieifed puma.script (this uses an app-specific userid/groupid, but it requires that the user/group name matches the app name referred to in the /etc/puma.conf file for loading puma apps
 ``` bash
-$ vi puma.conf
+$ cd /etc/init
+$ wget https://raw.githubusercontent.com/jholdsclaw/puma/master/tools/jungle/upstart/puma.conf
 ``` 
-Look for the two lines that specify setuid and setgid, and replace "apps" with the name of your deployment user and group:
-``` conf 
-setuid myapp
-setgid myapp
+Now add our app to the ```/etc/puma.conf``` file:
+``` bash
+/var/www/myapp
 ```
