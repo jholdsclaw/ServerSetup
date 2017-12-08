@@ -182,3 +182,5 @@ And add the entry:
 ``` bash
 /var/www/myapp
 ```
+### TODO: Install Nginx
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04#install-and-configure-nginx 
