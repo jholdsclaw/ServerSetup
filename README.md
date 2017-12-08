@@ -73,8 +73,8 @@ $ git clone git://github.com/username/myapp.git ~/code
 ```bash
 $ sudo -su myapp
 $ cd ~/code
-$ rbenv install 2.4.3
-$ rbenv local 2.4.3
+$ rbenv install 2.4.2
+$ rbenv local 2.4.2
 ```
 ### Setting up rbenv-vars secrets/credentials
 ```bash
