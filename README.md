@@ -176,5 +176,9 @@ $ wget https://raw.githubusercontent.com/jholdsclaw/puma/master/tools/jungle/ups
 ``` 
 Now add our app to the ```/etc/puma.conf``` file:
 ``` bash
+$vi /etc/puma.conf
+```
+And add the entry: 
+``` bash
 /var/www/myapp
 ```
