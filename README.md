@@ -120,7 +120,7 @@ MYAPP_DATABASE_PASSWORD=[prod_db_pass]
 Reference: 
 https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04
 
-### Configuring Puma for your app
+### Configuring Puma and Nginx for your app
 Now, let's add our Puma configuration to `config/puma.rb`. Open the file in a text editor:
 ``` bash
 $ vi config/puma.rb
