@@ -32,8 +32,8 @@ $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/ske
 ```
 *OPTIONAL* Install global ruby version
 ```bash
-$ rbenv install 2.4.3
-$ rbenv global 2.4.3
+$ rbenv install 2.4.2
+$ rbenv global 2.4.2
 $ ruby -v
 $ gem install bundler
 $ rbenv rehash
