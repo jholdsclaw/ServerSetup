@@ -116,11 +116,11 @@ MYAPP_DATABASE_USER=[appname]
 MYAPP_DATABASE_PASSWORD=[prod_db_pass]
 ```
 
-## Setting up Puma
+## Setting up Puma and Nginx
 Reference: 
 https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04
 
-### Configuring Puma and Nginx for your app
+### Configuring Puma for your app
 Now, let's add our Puma configuration to `config/puma.rb`. Open the file in a text editor:
 ``` bash
 $ vi config/puma.rb
@@ -157,6 +157,23 @@ on_worker_boot do
   ActiveRecord::Base.establish_connection(YAML.load_file("#{app_dir}/config/database.yml")[rails_env])
 end
 ```
-
-### TODO: setting up puma for upstart/systemd autostart
-
+Now create the directories that were referred to in the configuration file:
+``` bash
+$ mkdir -p shared/pids shared/sockets shared/log
+``` 
+### Setting up Puma for upstart/systemd autostart
+Download the Jungle Upstart tool from the Puma GitHub repository to your home directory:
+```bash 
+$ cd ~
+$ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma-manager.conf
+$ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma.conf
+``` 
+Now open the provided ```puma.conf``` file, so we can configure the Puma deployment user:
+``` bash
+$ vi puma.conf
+``` 
+Look for the two lines that specify setuid and setgid, and replace "apps" with the name of your deployment user and group:
+``` conf 
+setuid myapp
+setgid myapp
+```
