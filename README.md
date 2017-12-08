@@ -117,6 +117,46 @@ MYAPP_DATABASE_PASSWORD=[prod_db_pass]
 ```
 
 ## Setting up Puma
-TODO: configuring puma
-TODO: setting up puma for upstart/systemd autostart
+Reference: 
 https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-puma-and-nginx-on-ubuntu-14-04
+
+### Configuring Puma for your app
+Now, let's add our Puma configuration to `config/puma.rb`. Open the file in a text editor:
+``` bash
+vi config/puma.rb
+```
+Copy and paste this configuration into the file:
+``` ruby
+# Change to match your CPU core count
+workers 2
+
+# Min and Max threads per worker
+threads 1, 6
+
+app_dir = File.expand_path("../..", __FILE__)
+shared_dir = "#{app_dir}/shared"
+
+# Default to production
+rails_env = ENV['RAILS_ENV'] || "production"
+environment rails_env
+
+# Set up socket location
+bind "unix://#{shared_dir}/sockets/puma.sock"
+
+# Logging
+stdout_redirect "#{shared_dir}/log/puma.stdout.log", "#{shared_dir}/log/puma.stderr.log", true
+
+# Set master PID and state locations
+pidfile "#{shared_dir}/pids/puma.pid"
+state_path "#{shared_dir}/pids/puma.state"
+activate_control_app
+
+on_worker_boot do
+  require "active_record"
+  ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNotEstablished
+  ActiveRecord::Base.establish_connection(YAML.load_file("#{app_dir}/config/database.yml")[rails_env])
+end
+```
+
+### TODO: setting up puma for upstart/systemd autostart
+
