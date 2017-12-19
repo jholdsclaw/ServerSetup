@@ -53,35 +53,37 @@ $ rbenv rehash
 
 ## Deploying an application
 ### Setting up a new application user account
-Create the new app user account
+Create the deploy user account. Nginx doesn't play nice with different user accounts for each app.  So just create a single deploy user, even if hosting several apps on different virtual hosts.
 ```bash
-$ sudo adduser myapp
-```
-Setup SSH keys for new app user account (not sure I need this!??!)
-```bash
-$ su myapp
-$ mkdir -p ~/.ssh
-$ touch ~/.ssh/authorized_keys
-$ sudo sh -c "cat $HOME/.ssh/authorized_keys >> ~myapp/.ssh/authorized_keys"
-$ sudo chown -R myapp: ~myapp/.ssh
-$ sudo chmod 700 ~myapp/.ssh
-$ sudo sh -c "chmod 600 ~myapp/.ssh/*"
+$ sudo adduser deploy
 ```
 Add new app user account to rbenv group
 ```bash 
-$ sudo usermod -a -G rbenv myapp
+$ sudo usermod -a -G rbenv deploy
 ```
 ### Setting up application code
 ```bash
 $ sudo git clone git://github.com/username/myapp.git /var/www/myapp
-$ sudo chown -R myapp:myapp /var/www/myapp
+$ sudo chown -R deploy:deploy /var/www/myapp
 ```
 ### Setting up ruby version for myapp
 ```bash
-$ sudo -su myapp
+$ sudo -su deploy
 $ cd /var/www/myapp
 $ rbenv install 2.4.2
 $ rbenv local 2.4.2
+$ rbenv rehash
+```
+*(OPTIONAL)* Disable docs for gems for deploy user
+```bash
+$ vi ~/.gemrc
+```
+And add the following and save:
+```conf
+gem: --no-documentation
+```
+Install bundler gem
+```bash
 $ gem install bundler
 $ bundle install
 ```
