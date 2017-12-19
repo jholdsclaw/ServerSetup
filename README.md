@@ -19,9 +19,8 @@ Setup rbenv for current user
 ```bash
 $ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> ~/.bashrc
 $ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-$ exec $SHELL
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc (I DON'T THINK I NEED THIS!!!)
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/.bashrc (I DON'T THINK I NEED THIS!!!)
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/.bashrc
 $ exec $SHELL
 ```
 Setup rbenv for all new users
@@ -29,6 +28,7 @@ Setup rbenv for all new users
 $ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
 $ echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/etc/skel/.profile
 ```
 *OPTIONAL* Install global ruby version
 ```bash
