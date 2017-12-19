@@ -56,10 +56,11 @@ Create the new app user account
 ```bash
 $ sudo adduser myapp
 ```
-Setup SSH keys for new app user account
+Setup SSH keys for new app user account (not sure I need this!??!)
 ```bash
-$ sudo mkdir -p ~myapp/.ssh
-$ touch $HOME/.ssh/authorized_keys
+$ su myapp
+$ mkdir -p ~/.ssh
+$ touch ~/.ssh/authorized_keys
 $ sudo sh -c "cat $HOME/.ssh/authorized_keys >> ~myapp/.ssh/authorized_keys"
 $ sudo chown -R myapp: ~myapp/.ssh
 $ sudo chmod 700 ~myapp/.ssh
