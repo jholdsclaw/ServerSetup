@@ -50,9 +50,6 @@ $ gem install bundler
 $ rbenv rehash
 ```
 
-## Installing nginx
-TODO: Nginx install
-
 ## Deploying an application
 ### Setting up a new application user account
 Create the new app user account
