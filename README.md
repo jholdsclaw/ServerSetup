@@ -17,7 +17,7 @@ $ chmod -R g+rwxXs rbenv
 ```
 Setup rbenv for current user
 ```bash
-$ echo 'export PATH="/usr/local/rbenv:$PATH"' >> ~/.bashrc
+$ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> ~/.bashrc
 $ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 $ exec $SHELL
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc (I DON'T THINK I NEED THIS!!!)
@@ -26,7 +26,7 @@ $ exec $SHELL
 ```
 Setup rbenv for all new users
 ```bash
-$ echo 'export PATH="/usr/local/rbenv:$PATH"' >> /etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
 $ echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
 ```
