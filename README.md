@@ -20,7 +20,7 @@ Setup rbenv for current user
 $ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> ~/.bashrc
 $ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/.bashrc
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> ~/.bashrc
 $ exec $SHELL
 ```
 Setup rbenv for all new users
@@ -28,7 +28,7 @@ Setup rbenv for all new users
 $ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
 $ echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> /etc/skel/.profile
 ```
 *OPTIONAL* Install global ruby version
 ```bash
@@ -72,8 +72,8 @@ $ sudo usermod -a -G rbenv myapp
 ```
 ### Setting up application code
 ```bash
-$ sudo -su myapp
-$ git clone git://github.com/username/myapp.git /var/www/myapp
+$ sudo git clone git://github.com/username/myapp.git /var/www/myapp
+$ sudo chown -R myapp:myapp /var/www/myapp
 ```
 ### Setting up ruby version for myapp
 ```bash
@@ -81,10 +81,11 @@ $ sudo -su myapp
 $ cd /var/www/myapp
 $ rbenv install 2.4.2
 $ rbenv local 2.4.2
+$ gem install bundler
+$ bundle install
 ```
 ### Setting up rbenv-vars secrets/credentials
 ```bash
-$ sudo -su myapp
 $ cd /var/www/myapp
 $ rake secret
 ```
@@ -172,6 +173,7 @@ $ mkdir -p shared/pids shared/sockets shared/log
 ### Setting up Puma for upstart/systemd autostart
 Download the Jungle Upstart tool from the Puma GitHub repository to your home directory:
 ```bash 
+$ sudo su
 $ cd /etc/init
 $ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma-manager.conf
 ``` 
@@ -195,7 +197,7 @@ $ sudo apt-get install nginx
 ```
 OPTIONAL: Copy the default site config:
 ``` bash
-$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/myapp
+$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/myapp.com
 ```
 Update the conf for your app:
 ``` bash
@@ -215,7 +217,7 @@ server {
     try_files $uri/index.html $uri @app;
 
     location @app {
-        proxy_pass http://muapp;
+        proxy_pass http://myapp;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
         proxy_redirect off;
@@ -225,5 +227,19 @@ server {
     client_max_body_size 4G;
     keepalive_timeout 10;
 }
+```
+*OPTIONAL* Within the nginx.conf file, find the server_names_hash_bucket_size directive. Remove the # symbol to uncomment the line:
+```conf
+http {
+    . . .
+
+    server_names_hash_bucket_size 64;
+
+    . . .
+}
+```
+Now enable to server file
+```bash
+$ sudo ln -s /etc/nginx/sites-available/myapp.com /etc/nginx/sites-enabled/
 ```
 https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04
