@@ -23,12 +23,13 @@ $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashr
 $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> ~/.bashrc
 $ exec $SHELL
 ```
-Setup rbenv for all new users
+*(OPTIONAL)* Setup rbenv for all new users
 ```bash
-$ sudo echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
-$ sudo echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
-$ sudo echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
-$ sudo echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> /etc/skel/.profile
+$ sudu su
+$ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
+$ echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> /etc/skel/.profile
 ```
 *OPTIONAL* Install global ruby version
 ```bash
