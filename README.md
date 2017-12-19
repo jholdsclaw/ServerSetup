@@ -193,21 +193,23 @@ $ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/myapp
 ```
 Update the conf for your app:
 ``` bash
-upstream app {
+upstream myapp {
     # Path to Puma SOCK file, as defined previously
-    server unix:/var/www/appname/shared/sockets/puma.sock fail_timeout=0;
+    server unix:/var/www/myapp/shared/sockets/puma.sock fail_timeout=0;
 }
 
 server {
     listen 80;
-    server_name localhost;
+    listen [::]:80;
+    
+    server_name myapp.com www.myapp.com;
 
-    root /var/www/appname/public;
+    root /var/www/myapp/public;
 
     try_files $uri/index.html $uri @app;
 
     location @app {
-        proxy_pass http://app;
+        proxy_pass http://muapp;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
         proxy_redirect off;
@@ -218,5 +220,4 @@ server {
     keepalive_timeout 10;
 }
 ```
-# TODO: Fix nginx script above for explicit virtual host URL's
 https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04
