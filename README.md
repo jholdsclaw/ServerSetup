@@ -8,12 +8,12 @@ $ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libre
 Install rbenv and the ruby-build and rbenv-vars plugins for all users (must add users to rbenv group)
 ```bash
 $ cd /usr/local
-$ git clone https://github.com/rbenv/rbenv.git rbenv
-$ mkdir rbenv/plugins
-$ git clone https://github.com/rbenv/ruby-build.git rbenv/plugins/ruby-build
-$ git clone https://github.com/sstephenson/rbenv-vars.git rbenv/plugins/ruby-vars
-$ chgrp -R rbenv rbenv
-$ chmod -R g+rwxXs rbenv
+$ sudo git clone https://github.com/rbenv/rbenv.git rbenv
+$ sudo mkdir rbenv/plugins
+$ sudo git clone https://github.com/rbenv/ruby-build.git rbenv/plugins/ruby-build
+$ sudo git clone https://github.com/sstephenson/rbenv-vars.git rbenv/plugins/ruby-vars
+$ sudo chgrp -R rbenv rbenv
+$ sudo chmod -R g+rwxXs rbenv
 ```
 Setup rbenv for current user
 ```bash
