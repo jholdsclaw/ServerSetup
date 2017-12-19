@@ -35,12 +35,20 @@ $ echo 'export PATH="/usr/local/rbenv/plugins/ruby-var/bin:$PATH"' >> ~/etc/skel
 $ rbenv install 2.4.2
 $ rbenv global 2.4.2
 $ ruby -v
+```
+*OPTIONAL* Default to not install docs with gems
+```bash
+$ vi ~/.gemrc
+```
+```conf
+gem: --no-document
+```
+
+Install bundler
+```bash
 $ gem install bundler
 $ rbenv rehash
 ```
-TODO: gem: --no-document
-Need to add this to the gemrc file. 
-Should be in /etc/gemrc but want to test this
 
 ## Installing nginx
 TODO: Nginx install
