@@ -222,25 +222,37 @@ $ mkdir -p shared/pids shared/sockets shared/log
 ``` 
 **TODO:** May want to add rake assets:precompile and rake db:create here, and maybe bundle exec puma -C config/puma.rb to test everything works
 
-### Setting up Puma for upstart/systemd autostart
+### Setting up Puma for jungle upstartautostart
 Download the Jungle Upstart tool from the Puma GitHub repository to your home directory:
 ```bash 
 $ sudo su
 $ cd /etc/init
 $ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma-manager.conf
+$ wget https://raw.githubusercontent.com/puma/puma/master/tools/jungle/upstart/puma.conf
+$ touch /etc/puma.conf
 ``` 
-Now download my modieifed puma.script (this uses an app-specific userid/groupid, but it requires that the user/group name matches the app name referred to in the /etc/puma.conf file for loading puma apps
+Edit the puma.conf file to setup userid/groupid and rbenv
 ``` bash
-$ cd /etc/init
-$ wget https://raw.githubusercontent.com/jholdsclaw/puma/master/tools/jungle/upstart/puma.conf
+$ vi /etc/init/puma.conf
 ``` 
+Set the userid and groupid
+```conf
+# /etc/init/puma.conf - Puma config
+.
+.
+# change apps to match your deployment user if you want to use this as a less privileged user (recommended!)
+setuid deploy
+setgid deploy
+.
+.
+```
 Now add our app to the ```/etc/puma.conf``` file:
 ``` bash
 $vi /etc/puma.conf
 ```
 And add the entry: 
 ``` bash
-/var/www/myapp
+/home/deploy/myapp
 ```
 ### Install and Configure Nginx
 Install Nginx using apt-get:
