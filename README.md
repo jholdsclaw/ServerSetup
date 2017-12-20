@@ -157,7 +157,7 @@ port        ENV.fetch("PORT") { 3000 }
 
 # Specifies the `environment` that Puma will run in.
 #
-environment ENV.fetch("RAILS_ENV") { "development" }
+environment ENV.fetch("RAILS_ENV") { "production" }
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
@@ -167,23 +167,15 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 #
 workers ENV.fetch("WEB_CONCURRENCY") { 1 }
 
-# Default to production
-rails_env = ENV['RAILS_ENV'] || "production"
-environment rails_env
-
 # Setup the shared directories for logs, socks and pids
 app_dir = File.expand_path("../..", __FILE__)
-shared_dir = "#{app_dir}/shared"
 
 # Set up socket location
-bind "unix://#{shared_dir}/sockets/puma.sock"
-
-# Logging
-stdout_redirect "#{shared_dir}/log/puma.stdout.log", "#{shared_dir}/log/puma.stderr.log", true
+bind "unix://#{app_dir}/tmp/puma/puma.sock"
 
 # Set master PID and state locations
-pidfile "#{shared_dir}/pids/puma.pid"
-state_path "#{shared_dir}/pids/puma.state"
+pidfile "#{app_dir}/tmp/puma/pid"
+state_path "#{app_dir}/tmp/puma/state"
 activate_control_app
 
 # Use the `preload_app!` method when specifying a `workers` number.
