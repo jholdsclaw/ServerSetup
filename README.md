@@ -26,10 +26,10 @@ $ exec $SHELL
 *(OPTIONAL)* Setup rbenv for all new users
 ```bash
 $ sudu su
-$ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.profile
-$ echo 'eval "$(rbenv init -)"' >> /etc/skel/.profile
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.profile
-$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> /etc/skel/.profile
+$ echo 'export PATH="/usr/local/rbenv/bin:$PATH"' >> /etc/skel/.bashrc
+$ echo 'eval "$(rbenv init -)"' >> /etc/skel/.bashrc
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-build/bin:$PATH"' >> /etc/skel/.bashrc
+$ echo 'export PATH="/usr/local/rbenv/plugins/ruby-vars/bin:$PATH"' >> /etc/skel/.bashrc
 ```
 *OPTIONAL* Install global ruby version
 ```bash
@@ -57,19 +57,21 @@ Create the deploy user account. Nginx doesn't play nice with different user acco
 ```bash
 $ sudo adduser deploy
 ```
+**TODO** Maybe set shell to nologin for deploy user?
+
 Add new app user account to rbenv group
 ```bash 
 $ sudo usermod -a -G rbenv deploy
 ```
-### Setting up application code
+### Setting up application code 
+I've decided to stage the code in the deploy user's home directory, and use symlilnks from /var/www/ pointing to the public folder...not sure why, but let's give it a shot
 ```bash
-$ sudo git clone git://github.com/username/myapp.git /var/www/myapp
-$ sudo chown -R deploy:deploy /var/www/myapp
+$ sudo -su deploy
+$ git clone git://github.com/username/myapp.git ~/myapp
 ```
 ### Setting up ruby version for myapp
 ```bash
-$ sudo -su deploy
-$ cd /var/www/myapp
+$ cd ~/myapp
 $ rbenv install 2.4.2
 $ rbenv local 2.4.2
 $ rbenv rehash
@@ -80,21 +82,22 @@ $ vi ~/.gemrc
 ```
 And add the following and save:
 ```conf
-gem: --no-documentation
+gem: --no-document
 ```
 Install bundler gem
 ```bash
+$ cd ~/myapp
 $ gem install bundler
 $ bundle install
 ```
 ### Setting up rbenv-vars secrets/credentials
 ```bash
-$ cd /var/www/myapp
+$ cd ~/myapp
 $ rake secret
 ```
 Copy the secret key that is generated, then open the .rbenv-vars file.
 ```bash 
-$ vi ~/.rbenv-vars
+$ vi .rbenv-vars
 ```
 First, set the SECRET_KEY_BASE variable like this:
 ```bash 
@@ -102,7 +105,7 @@ SECRET_KEY_BASE=[your_generated_secret]
 ```
 Edit your database.yml file for database credentials
 ```bash 
-$ cd /var/www/myapp
+$ cd ~/myapp
 $ vi config/database.yml
 ```
 Update the production section so it looks something like this:
@@ -119,7 +122,7 @@ production:
 ```
 Note that the database username and password are configured to be read by environment variables, MYAPP_DATABASE_USER and MYAPP_DATABASE_PASSWORD.  Once again, edit the .rbenv-vars file and add the credentials:
 ```bash 
-$ vi ~/.rbenv-vars
+$ vi .rbenv-vars
 ```
 Set the MYAPP_DATABASE_USER and MYAPP_DATABASE_PASSWORD environment variables: 
 ```bash 
@@ -134,23 +137,43 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-
 ### Configuring Puma for your app
 Now, let's add our Puma configuration to `config/puma.rb`. Open the file in a text editor:
 ``` bash
-$ cd /var/www/myapp
+$ cd ~/myapp
 $ vi config/puma.rb
 ```
 Copy and paste this configuration into the file:
 ``` ruby
-# Change to match your CPU core count
-workers 2
+# Puma can serve each request in a thread from an internal thread pool.
+# The `threads` method setting takes two numbers: a minimum and maximum.
+# Any libraries that use thread pools should be configured to match
+# the maximum value specified for Puma. Default is set to 5 threads for minimum
+# and maximum; this matches the default thread size of Active Record.
+#
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+threads threads_count, threads_count
 
-# Min and Max threads per worker
-threads 1, 6
+# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
+#
+port        ENV.fetch("PORT") { 3000 }
 
-app_dir = File.expand_path("../..", __FILE__)
-shared_dir = "#{app_dir}/shared"
+# Specifies the `environment` that Puma will run in.
+#
+environment ENV.fetch("RAILS_ENV") { "development" }
+
+# Specifies the number of `workers` to boot in clustered mode.
+# Workers are forked webserver processes. If using threads and workers together
+# the concurrency of the application would be max `threads` * `workers`.
+# Workers do not work on JRuby or Windows (both of which do not support
+# processes).
+#
+workers ENV.fetch("WEB_CONCURRENCY") { 1 }
 
 # Default to production
 rails_env = ENV['RAILS_ENV'] || "production"
 environment rails_env
+
+# Setup the shared directories for logs, socks and pids
+app_dir = File.expand_path("../..", __FILE__)
+shared_dir = "#{app_dir}/shared"
 
 # Set up socket location
 bind "unix://#{shared_dir}/sockets/puma.sock"
@@ -163,16 +186,50 @@ pidfile "#{shared_dir}/pids/puma.pid"
 state_path "#{shared_dir}/pids/puma.state"
 activate_control_app
 
-on_worker_boot do
-  require "active_record"
-  ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNotEstablished
-  ActiveRecord::Base.establish_connection(YAML.load_file("#{app_dir}/config/database.yml")[rails_env])
-end
+# Use the `preload_app!` method when specifying a `workers` number.
+# This directive tells Puma to first boot the application and load code
+# before forking the application. This takes advantage of Copy On Write
+# process behavior so workers use less memory. If you use this option
+# you need to make sure to reconnect any threads in the `on_worker_boot`
+# block.
+#
+# preload_app!
+
+# If you are preloading your application and using Active Record, it's
+# recommended that you close any connections to the database before workers
+# are forked to prevent connection leakage.
+#
+# before_fork do
+#   ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
+# end
+
+# The code in the `on_worker_boot` will be called if you are using
+# clustered mode by specifying a number of `workers`. After each worker
+# process is booted, this block will be run. If you are using the `preload_app!`
+# option, you will want to use this block to reconnect to any threads
+# or connections that may have been created at application boot, as Ruby
+# cannot share connections between processes.
+#
+# on_worker_boot do
+#   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+# end
+#
+# --- OR ---
+# on_worker_boot do
+#   require "active_record"
+#   ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNotEstablished
+#   ActiveRecord::Base.establish_connection(YAML.load_file("#{app_dir}/config/database.yml")[rails_env])
+# end
+
+# Allow puma to be restarted by `rails restart` command.
+plugin :tmp_restart
 ```
 Now create the directories that were referred to in the configuration file:
 ``` bash
 $ mkdir -p shared/pids shared/sockets shared/log
 ``` 
+**TODO:** May want to add rake assets:precompile and rake db:create here, and maybe bundle exec puma -C config/puma.rb to test everything works
+
 ### Setting up Puma for upstart/systemd autostart
 Download the Jungle Upstart tool from the Puma GitHub repository to your home directory:
 ```bash 
