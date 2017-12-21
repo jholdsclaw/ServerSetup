@@ -294,7 +294,7 @@ Set the user to deploy
 user deploy;
 ```
 
-*OPTIONAL* Within the nginx.conf file, find the server_names_hash_bucket_size directive. Remove the # symbol to uncomment the line:
+*OPTIONAL* If your server name (url) is too long, or you've tried adding too many virtual hosts and nginx fails to start, within the nginx.conf file, find the server_names_hash_bucket_size directive. Remove the # symbol to uncomment the line (set higher than 64 if needed):
 ```conf
 http {
     . . .
