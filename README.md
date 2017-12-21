@@ -260,7 +260,7 @@ Update the conf for your app:
 ``` bash
 upstream myapp {
     # Path to Puma SOCK file, as defined previously
-    server unix:/var/www/myapp/shared/sockets/puma.sock fail_timeout=0;
+    server unix:/home/deploy/myapp/tmp/puma/puma.sock fail_timeout=0;
 }
 
 server {
@@ -269,7 +269,7 @@ server {
     
     server_name myapp.com www.myapp.com;
 
-    root /var/www/myapp/public;
+    root /home/deploy/myapp/public;
 
     try_files $uri/index.html $uri @app;
 
@@ -285,6 +285,15 @@ server {
     keepalive_timeout 10;
 }
 ```
+Update the nginx.conf file to set the user
+```vi 
+$ sudo vi /etc/nginx/nginx.conf
+```
+Set the user to deploy
+```conf
+user deploy;
+```
+
 *OPTIONAL* Within the nginx.conf file, find the server_names_hash_bucket_size directive. Remove the # symbol to uncomment the line:
 ```conf
 http {
