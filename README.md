@@ -1,4 +1,98 @@
 # Server Setup
+
+## Securing the Server
+### Turn off root SSH login 
+Note: make sure you have another account with sudo access created first!
+
+Edit the ssh config to disable off root logins
+```bash
+$ sudo vi /etc/ssh/sshd_config
+```
+Find the line with the `PermitRootLogin` setting and set it to no.
+```conf
+PermitRootLogin no
+```
+
+### TODO: Setup ssh key authentication and disable password login
+
+### Install a firewall (ufw)
+Install ufw
+```bash
+$ sudo apt-get install ufw
+```
+Make sure IPV6 filtering is enabled (if applicable)
+```bash
+$ sudo vi /etc/default/ufw
+```
+Look for the line `IPV6=no` and change it to yes
+```conf
+IPV6=yes
+```
+Setup your rules
+```bash
+$ sudo ufw default deny incoming
+$ sudo ufw default allow outgoing
+$ sudo ufw allow ssh
+$ sudo ufw allow www
+$ sudo ufw allow https
+```
+Restart ufw to ensure rules are applied
+```bash
+$ sudo ufw disable
+$ sudo ufw enable
+```
+You can validate your rules by checking the status
+```bash
+$ sudo ufw status
+
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22                         ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443                        ALLOW       Anywhere
+22 (v6)                    ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443 (v6)                   ALLOW       Anywhere (v6)
+```
+### Setup unattended upgrades to keep system packages updated
+Install unattended-updates package
+```bash
+$ sudo apt-get install unattended-updates
+```
+Edit the settings to enable automatic updates as follow (make sure to uncomment security and updates, if not already)
+```bash
+$ sudo vi /etc/apt/apt.conf.d/50unattended-upgrades
+```
+```conf
+// Automatically upgrade packages from these (origin:archive) pairs
+Unattended-Upgrade::Allowed-Origins {
+        "${distro_id}:${distro_codename}";
+        "${distro_id}:${distro_codename}-security";
+        // Extended Security Maintenance; doesn't necessarily exist for
+        // every release and this system may not have it installed, but if
+        // available, the policy for updates is such that unattended-upgrades
+        // should also install from here by default.
+        "${distro_id}ESM:${distro_codename}";
+        "${distro_id}:${distro_codename}-updates";
+//      "${distro_id}:${distro_codename}-proposed";
+//      "${distro_id}:${distro_codename}-backports";
+};
+
+// List of packages to not update (regexp are supported)
+Unattended-Upgrade::Package-Blacklist {
+//      "vim";
+//      "libc6";
+//      "libc6-dev";
+//      "libc6-i686";
+};
+...
+...
+```
+TODO: Setup email for unattended-upgrades (ref: http://www.zartl.info/?p=422)
+
+
 ## Setting up Ruby
 Install dependencies
 ```bash
