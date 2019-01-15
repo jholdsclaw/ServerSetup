@@ -59,7 +59,7 @@ To                         Action      From
 ### Setup unattended upgrades to keep system packages updated
 Install unattended-updates package
 ```bash
-$ sudo apt-get install unattended-updates
+$ sudo apt-get install unattended-upgrades
 ```
 Edit the settings to enable automatic updates as follow (make sure to uncomment security and updates, if not already)
 ```bash
